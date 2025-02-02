@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import BookMarkModal from "@/components/BookMarkModal";
 import { FC } from "react";
 import Link from "next/link";
@@ -11,7 +10,8 @@ interface BlogPageProps {
   };
 }
 
-const BlogPage: FC<BlogPageProps> = async ({ params: { id } }) => {
+const BlogPage: FC<BlogPageProps> = async ({ params }) => {
+  const { id } = await params;
   const db = await getDb();
   const blog = await db.get("SELECT * FROM blog WHERE id = ?", [id]);
 
@@ -48,12 +48,8 @@ const BlogPage: FC<BlogPageProps> = async ({ params: { id } }) => {
           </div>
           <p>{blog.content}</p>
           <div className="flex gap-3">
-            <Dialog>
-              <DialogTrigger className="py-3 bg-gray-300 px-10 uppercase">
-                Bookmark
-              </DialogTrigger>
+            
               <BookMarkModal blogId={blog.id} />
-            </Dialog>
             <Link
               href={`/form/${blog.id}`}
               className="py-3 bg-gray-300 px-10 uppercase"

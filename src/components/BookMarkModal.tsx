@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FolderClosed } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import BookMarkFolders from "./BookMarkFolders";
 
 interface ModalProps {
   blogId: string;
 }
 
 const BookMarkModal: React.FC<ModalProps> = ({ blogId }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [createNew, setCreateNew] = useState(false);
   const [checks, setChecks] = useState<string[]>([]);
   const [bookMarks, setBookMarks] = useState<Record<string, string[]>>({});
@@ -37,16 +42,6 @@ const BookMarkModal: React.FC<ModalProps> = ({ blogId }) => {
     }
   }, [blogId]);
 
-  const handleCheckboxChange = (fName: string, checked: boolean) => {
-    setChecks((prevChecks) => {
-      if (checked) {
-        return [...prevChecks, fName];
-      } else {
-        return prevChecks.filter((item) => item !== fName);
-      }
-    });
-  };
-
   const handleAddFolder = () => {
     if (newFolder.length === 0 && inputRef.current) {
       inputRef.current.focus();
@@ -58,6 +53,13 @@ const BookMarkModal: React.FC<ModalProps> = ({ blogId }) => {
       [newFolder]: [],
     });
     setCreateNew(false);
+    localStorage.setItem(
+      "bookmarks",
+      JSON.stringify({
+        ...bookMarks,
+        [newFolder]: [],
+      })
+    );
   };
 
   const handleBookMarks = () => {
@@ -80,52 +82,46 @@ const BookMarkModal: React.FC<ModalProps> = ({ blogId }) => {
     setBookMarks(updatedBookMarks);
 
     localStorage.setItem("bookmarks", JSON.stringify(updatedBookMarks));
+    setIsOpen(false);
   };
 
   return (
-    <DialogContent>
-      <DialogTitle className="text-center mb-5">ADD TO BOOKMARK</DialogTitle>
-      <div className="space-y-7">
-        {createNew ? (
-          <>
-            <Input
-              ref={inputRef}
-              onChange={(e) => setNewFolder(e.target.value)}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger className="py-3 bg-gray-300 px-10 uppercase">
+        Bookmark
+      </DialogTrigger>
+
+      <DialogContent>
+        <DialogTitle className="text-center mb-5">ADD TO BOOKMARK</DialogTitle>
+        <div className="space-y-7">
+          {createNew ? (
+            <>
+              <Input
+                ref={inputRef}
+                onChange={(e) => setNewFolder(e.target.value)}
+              />
+            </>
+          ) : (
+            <BookMarkFolders
+              bookMarks={bookMarks}
+              checks={checks}
+              setChecks={setChecks}
             />
-          </>
-        ) : (
-          <div>
-            {Object.keys(bookMarks).map((fName, index) => (
-              <div key={index} className="flex items-center gap-4 text-xl">
-                <Checkbox
-                  checked={
-                    checks.find((c) => c === fName.toString()) ? true : false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleCheckboxChange(fName, Boolean(checked))
-                  }
-                />
-                <div className="flex items-center gap-1">
-                  <FolderClosed />
-                  <span>{fName}</span>
-                </div>
-              </div>
-            ))}
+          )}
+          <div className="flex gap-2">
+            <Button onClick={() => setCreateNew(!createNew)} className="w-full">
+              {!createNew ? "create new" : "cancel"}
+            </Button>
+            <Button
+              className="w-full"
+              onClick={createNew ? handleAddFolder : handleBookMarks}
+            >
+              {createNew ? "Create" : "Done"}
+            </Button>
           </div>
-        )}
-        <div className="flex gap-2">
-          <Button onClick={() => setCreateNew(!createNew)} className="w-full">
-            {!createNew ? "create new" : "cancel"}
-          </Button>
-          <Button
-            className="w-full"
-            onClick={createNew ? handleAddFolder : handleBookMarks}
-          >
-            {createNew ? "Create" : "Done"}
-          </Button>
         </div>
-      </div>
-    </DialogContent>
+      </DialogContent>
+    </Dialog>
   );
 };
 
