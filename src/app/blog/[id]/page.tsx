@@ -3,6 +3,7 @@ import BookMarkModal from "@/components/BookMarkModal";
 import { FC } from "react";
 import Link from "next/link";
 import getDb from "../../../../sqlite";
+import BlogDeleteButton from "@/components/BlogDeleteButton";
 
 interface BlogPageProps {
   params: {
@@ -48,17 +49,14 @@ const BlogPage: FC<BlogPageProps> = async ({ params }) => {
           </div>
           <p>{blog.content}</p>
           <div className="flex gap-3">
-            
-              <BookMarkModal blogId={blog.id} />
+            <BookMarkModal blogId={blog.id} />
             <Link
               href={`/form/${blog.id}`}
               className="py-3 bg-gray-300 px-10 uppercase"
             >
               Edit Blog
             </Link>
-            <button className="py-3 bg-gray-300 px-10 uppercase">
-              Delete Blog
-            </button>
+            <BlogDeleteButton id={id} />
           </div>
         </div>
       ) : (

@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { addBlog } from "@/actions";
 
 type Inputs = {
   id: string;
@@ -19,11 +20,13 @@ type Inputs = {
 const BlogFormPage = () => {
   const { register, handleSubmit } = useForm<Inputs>();
   const params = useParams();
+  const router = useRouter();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (params.action === "add") {
-      console.log(data);
       // create a blog here
+      await addBlog({ data });
+      router.push("/blogs");
     } else {
       const id = params.action;
       console.log(id, data);
