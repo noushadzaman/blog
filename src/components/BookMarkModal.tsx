@@ -26,7 +26,9 @@ const BookMarkModal: React.FC<ModalProps> = ({ blogId }) => {
 
       Object.keys(object).forEach((key) => {
         const found = object[key]?.find((id: string) => id === blogId);
-        console.log(found);
+        if (found) {
+          setChecks((prevChecks) => [...prevChecks, key]);
+        }
       });
     } else {
       setBookMarks({

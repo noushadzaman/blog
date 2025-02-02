@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useParams } from "next/navigation";
 
 type Inputs = {
   id: string;
@@ -15,11 +16,10 @@ type Inputs = {
   imgUrl: string;
 };
 
-const AddBlogPage = () => {
-  const {
-    register,
-    handleSubmit,
-  } = useForm<Inputs>();
+const BlogFormPage = () => {
+  const { register, handleSubmit } = useForm<Inputs>();
+  const params = useParams();
+  console.log(params.action === "add");
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
@@ -27,7 +27,9 @@ const AddBlogPage = () => {
 
   return (
     <div className="max-w-3xl mx-auto pt-16 space-y-5">
-      <p className="text-2xl font-semibold">ADD BLOG</p>
+      <p className="text-2xl font-semibold">
+        {params.action === "add" ? "ADD BLOG" : "UPDATE BLOG"}
+      </p>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -67,11 +69,11 @@ const AddBlogPage = () => {
         </div>
 
         <Button type="submit" className="w-full mt-8">
-          ADD BLOG
+          {params.action === "add" ? "ADD BLOG" : "UPDATE BLOG"}
         </Button>
       </form>
     </div>
   );
 };
 
-export default AddBlogPage;
+export default BlogFormPage;
