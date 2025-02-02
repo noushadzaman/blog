@@ -2,8 +2,8 @@ import Image from "next/image";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import BookMarkModal from "@/components/BookMarkModal";
 import { FC } from "react";
-import { blogs } from "@/constants";
 import Link from "next/link";
+import getDb from "../../../../sqlite";
 
 interface BlogPageProps {
   params: {
@@ -11,8 +11,9 @@ interface BlogPageProps {
   };
 }
 
-const BlogPage: FC<BlogPageProps> = ({ params: { id } }) => {
-  const blog = blogs.find((blog) => blog.id === id);
+const BlogPage: FC<BlogPageProps> = async ({ params: { id } }) => {
+  const db = await getDb();
+  const blog = await db.get("SELECT * FROM blog WHERE id = ?", [id]);
 
   return (
     <>
@@ -59,6 +60,9 @@ const BlogPage: FC<BlogPageProps> = ({ params: { id } }) => {
             >
               Edit Blog
             </Link>
+            <button className="py-3 bg-gray-300 px-10 uppercase">
+              Delete Blog
+            </button>
           </div>
         </div>
       ) : (

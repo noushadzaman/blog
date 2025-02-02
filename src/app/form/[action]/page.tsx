@@ -19,10 +19,16 @@ type Inputs = {
 const BlogFormPage = () => {
   const { register, handleSubmit } = useForm<Inputs>();
   const params = useParams();
-  console.log(params.action === "add");
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    if (params.action === "add") {
+      console.log(data);
+      // create a blog here
+    } else {
+      const id = params.action;
+      console.log(id, data);
+      // update a blog here
+    }
   };
 
   return (
